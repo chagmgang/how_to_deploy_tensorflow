@@ -28,10 +28,9 @@ docker run -it -p 9000:9000 --name tf-serve -v $(pwd)/serve/:/serve/ epigramai/m
 Install library python for make client and end-point
 
 ```
-pip install git+https://github.com/epigramai/tfserving-python-predict-client.git
+pip install git+https://github.com/chagmgang/tfserving-python-predict-client.git or pip install git+https://github.com/epigramai/tfserving-python-predict-client.git
 ```
-
-Test the response of docker
+## Test the response of docker
 
 ```
 python client.py
