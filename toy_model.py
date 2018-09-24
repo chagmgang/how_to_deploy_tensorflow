@@ -1,52 +1,68 @@
 import tensorflow as tf
 import numpy as np
 import os, sys
+from tensorflow.examples.tutorials.mnist import input_data
+mnist = input_data.read_data_sets("./mnist/data/", one_hot=True)
 
 DATA_SIZE = 100
 SAVE_PATH = './save'
-EPOCHS = 1000
+EPOCHS = 400
 LEARNING_RATE = 0.01
 MODEL_NAME = 'test'
 
 if not os.path.exists(SAVE_PATH):
     os.mkdir(SAVE_PATH)
 
-data = (np.random.rand(DATA_SIZE, 2), np.random.rand(DATA_SIZE, 1))
-test = (np.random.rand(DATA_SIZE // 8, 2), np.random.rand(DATA_SIZE // 8, 1))
-
 tf.reset_default_graph()
 
-x = tf.placeholder(tf.float32, shape=[None, 2], name='inputs')
-y = tf.placeholder(tf.float32, shape=[None, 1], name='targets')
+x = tf.placeholder(tf.float32, shape=[None, 784], name='inputs')
+y = tf.placeholder(tf.float32, shape=[None, 10], name='targets')
 
-net = tf.layers.dense(x, 16, activation=tf.nn.relu)
-net = tf.layers.dense(net, 16, activation=tf.nn.relu)
-pred = tf.layers.dense(net, 1, activation=tf.nn.sigmoid, name='prediction')
+reshape = tf.reshape(x, [-1, 28, 28, 1])
+l1 = tf.layers.conv2d(reshape, 32, [3, 3], activation=tf.nn.relu)
+l1 = tf.layers.max_pooling2d(l1, [2, 2], [2, 2])
+l1 = tf.layers.dropout(l1, 0.7)
 
-loss = tf.reduce_mean(tf.squared_difference(y, pred), name='loss')
-train_step = tf.train.AdamOptimizer(LEARNING_RATE).minimize(loss)
+L2 = tf.layers.conv2d(l1, 64, [3, 3], activation=tf.nn.relu)
+L2 = tf.layers.max_pooling2d(L2, [2, 2], [2, 2])
+L2 = tf.layers.dropout(L2, 0.7)
 
-checkpoint = tf.train.latest_checkpoint(SAVE_PATH)
-should_train = checkpoint == None
+L3 = tf.contrib.layers.flatten(L2)
+L3 = tf.layers.dense(L3, 256, activation=tf.nn.relu)
+L3 = tf.layers.dropout(L3, 0.5)
 
-with tf.Session() as sess:
-    sess.run(tf.global_variables_initializer())
-    if should_train:
-        print("Training")
-        saver = tf.train.Saver()
-        for epoch in range(EPOCHS):
-            _, curr_loss = sess.run([train_step, loss], feed_dict={x: data[0], y: data[1]})
-            print('EPOCH = {}, LOSS = {:0.4f}'.format(epoch, curr_loss))
-        path = saver.save(sess, SAVE_PATH + '/' + MODEL_NAME + '.ckpt')
-        print("saved at {}".format(path))
-    else:
-        print("Restoring")
-        graph = tf.get_default_graph()
-        saver = tf.train.import_meta_graph(checkpoint + '.meta')
-        saver.restore(sess, checkpoint)
+pred = tf.layers.dense(inputs=L3, units=10, activation=tf.nn.softmax, name='prediction')
 
-        loss = graph.get_tensor_by_name('loss:0')
+cost = -tf.reduce_mean(y * tf.log(pred))
+train_step = tf.train.AdamOptimizer(0.001).minimize(cost)
 
-        test_loss = sess.run(loss, feed_dict={'inputs:0': test[0], 'targets:0': test[1]})
-        print(sess.run(pred, feed_dict={'inputs:0': np.random.rand(10,2)}))
-        print("TEST LOSS = {:0.4f}".format(test_loss))
+#checkpoint = tf.train.latest_checkpoint(SAVE_PATH)
+#should_train = checkpoint == None
+
+saver = tf.train.Saver()
+
+init = tf.global_variables_initializer()
+sess = tf.Session()
+sess.run(init)
+
+batch_size = 100
+total_batch = int(mnist.train.num_examples/batch_size)
+
+for epoch in range(10):
+    total_cost = 0
+
+    for i in range(total_batch):
+        batch_xs, batch_ys = mnist.train.next_batch(batch_size)
+        _, cost_val = sess.run([train_step, cost],
+                               feed_dict={x: batch_xs,
+                                          y: batch_ys})
+        total_cost += cost_val
+
+    print('Epoch:', '%04d' % (epoch + 1),
+          'Avg. cost =', '{:.4f}'.format(total_cost / total_batch))
+
+    result = sess.run(pred, feed_dict={x: batch_xs})
+    print(result)
+
+path = saver.save(sess, SAVE_PATH + '/' + MODEL_NAME + '.ckpt')
+print("saved at {}".format(path))

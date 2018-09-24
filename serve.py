@@ -15,10 +15,10 @@ with tf.Session() as sess:
     saver = tf.train.import_meta_graph(checkpoint + '.meta')
     # get the graph for this session
     graph = tf.get_default_graph()
-    sess.run(tf.global_variables_initializer())
+    saver.restore(sess, checkpoint)
     # get the tensors that we need
     inputs = graph.get_tensor_by_name('inputs:0')
-    predictions = graph.get_tensor_by_name('prediction/Sigmoid:0')
+    predictions = graph.get_tensor_by_name('prediction/Softmax:0')
 
     model_input = tf.saved_model.utils.build_tensor_info(inputs)
     model_output = tf.saved_model.utils.build_tensor_info(predictions)
