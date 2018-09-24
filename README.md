@@ -19,6 +19,9 @@ python serve.py
 docker run -it -p <PORT>:<PORT> — name <CONTAINER_NAME> -v <ABSOLUTE_PATH_TO_SERVE_DIR>:<SERVE_DIR> epigramai/model-server:light-universal-1.7 — port=<PORT> — model_name=<MODEL_NAME> — model_base_path=<MODEL_DIR>
 ```
 
+for example
+
+
 ```
 docker run -it -p 9000:9000 --name tf-serve -v $(pwd)/serve/:/serve/ epigramai/model-server:light-universal-1.7 --port=9000 --model_name=test --model_base_path=/serve/test
 ```
