@@ -23,6 +23,12 @@ docker run -it -p <PORT>:<PORT> — name <CONTAINER_NAME> -v <ABSOLUTE_PATH_
 docker run -it -p 9000:9000 --name tf-serve -v $(pwd)/serve/:/serve/ epigramai/model-server:light-universal-1.7 --port=9000 --model_name=test --model_base_path=/serve/test
 ```
 
+or
+
+```
+docker run -it -p 9000:9000 --name tf-serve -v $(pwd)/serve/:/serve/ chagmgang/tensorflow_deploy:1.7 --port=9000 --model_name=test --model_base_path=/serve/test
+```
+
 ## Create a client in order to send the gRPC request
 
 Install library python for make client and end-point
