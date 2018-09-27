@@ -98,4 +98,4 @@ python api_endpoint.py
 ```
 
 ## test via postman
-![image](./src/1_OxCFwpBMGspD_AwEuaZwxQ.png)
+![image](./mnist_deploy/src/1_OxCFwpBMGspD_AwEuaZwxQ.png)
