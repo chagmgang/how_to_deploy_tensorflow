@@ -99,3 +99,18 @@ python api_endpoint.py
 
 ## test via postman
 ![image](./mnist_deploy/src/1_OxCFwpBMGspD_AwEuaZwxQ.png)
+
+## without docker(only can be done in ubuntu)
+```
+echo "deb [arch=amd64] http://storage.googleapis.com/tensorflow-serving-apt stable tensorflow-model-server tensorflow-model-server-universal" | sudo tee /etc/apt/sources.list.d/tensorflow-serving.list
+
+curl https://storage.googleapis.com/tensorflow-serving-apt/tensorflow-serving.release.pub.gpg | sudo apt-key add -
+```
+
+```
+sudo apt-get update && sudo apt-get install tensorflow-model-server
+```
+
+```
+tensorflow_model_server --port=port_number --model_name=model_name --model_base_path=absolute/path/to/model
+```
