@@ -43,6 +43,11 @@ wget -qO- --show-progress https://wit3.fbk.eu/archive/2016-01//texts/de/en/de-en
 ## Evaluation
   * Run `eval.py`.
 
+## Serving by Flask
+```
+python app.py
+```
+
 ## Results
 I got a BLEU score of 17.14. (Recollect I trained with a small dataset, limited vocabulary) Some of the evaluation results are as follows. Details are available in the `results` folder.
 
@@ -89,3 +94,9 @@ got: Oh yeah you all are incredibly
 source: Dies ist nicht meine Meinung Das sind Fakten<br>
 expected: This is not my opinion These are the facts<br>
 got: This is not my opinion These are facts
+
+## transformed from
+
+https://github.com/Kyubyong/transformer
+
+thanks
