@@ -10,8 +10,7 @@ B = np.load('dataset_trainB.npy') / 255.
 iters = 200 * min(A.shape[0], B.shape[0])
 batch_size = 1
 
-with tf.device('/gpu:0'):
-    model = CycleGAN(256, 256, xchan=3, ychan=3)
+model = CycleGAN(256, 256, xchan=3, ychan=3)
 
 saver = tf.train.Saver()
 
